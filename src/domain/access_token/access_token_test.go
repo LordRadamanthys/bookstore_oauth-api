@@ -11,8 +11,8 @@ func TestAccessTokenConstats(t *testing.T) {
 	assert.EqualValues(t, 24, expirationTime, "expiration time should be 24h")
 }
 func TestGetNewAccessToken(t *testing.T) {
-	at := GetNewAccessToken()
-	assert.False(t, at.IsExpire(), "brand new access token should not be nil")
+	at := GetNewAccessToken(0)
+	assert.False(t, at.IsExpired(), "brand new access token should not be nil")
 
 	assert.Empty(t, at.AccessToken, "new access token should not have defined access token id")
 
@@ -22,9 +22,9 @@ func TestGetNewAccessToken(t *testing.T) {
 
 func TestAccessTokenIsExpired(t *testing.T) {
 	at := AccessToken{}
-	assert.True(t, at.IsExpire(), "empty access token should be expired by default")
+	assert.True(t, at.IsExpired(), "empty access token should be expired by default")
 
 	at.Expires = int(time.Now().UTC().Add(3 * time.Hour).Unix())
-	assert.False(t, at.IsExpire(), "access token expiring three hours from now should NOT be expired")
+	assert.False(t, at.IsExpired(), "access token expiring three hours from now should NOT be expired")
 
 }

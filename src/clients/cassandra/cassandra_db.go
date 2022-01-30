@@ -10,6 +10,15 @@ var (
 
 func init() {
 	// connect to cassandra cluster
+	// 	Run commands in cqlsh like this:
+
+	// docker exec -it cassandra cqlsh
+	// Stop the service like this:
+
+	// docker stop cassandra
+	// Start it again like this:
+
+	// docker start cassandra
 	cluster := gocql.NewCluster("localhost")
 	cluster.Keyspace = "oauth"
 	cluster.Consistency = gocql.Quorum

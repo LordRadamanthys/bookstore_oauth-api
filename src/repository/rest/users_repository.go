@@ -2,6 +2,7 @@ package rest
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/LordRadamanthys/bookstore_oauth-api/src/domain/users"
@@ -11,7 +12,7 @@ import (
 
 var (
 	usersRestClient = rest.RequestBuilder{
-		BaseURL: "https://api.bookstore.com",
+		BaseURL: "http://localhost:8081",
 		Timeout: 100 * time.Millisecond,
 	}
 )
@@ -32,7 +33,8 @@ func (r *usersRepository) LoginUser(email string, passowrd string) (*users.User,
 		Email:    email,
 		Password: passowrd,
 	}
-	response := usersRestClient.Post("users/login", request)
+	fmt.Println(request)
+	response := usersRestClient.Post("/users/login", request)
 
 	if response == nil || response.Response == nil {
 		return nil, errors.InternalServerError("invalid rest client response when trying to login user")
@@ -48,6 +50,7 @@ func (r *usersRepository) LoginUser(email string, passowrd string) (*users.User,
 	}
 
 	var user users.User
+	fmt.Println(response)
 	if err := json.Unmarshal(response.Bytes(), &user); err != nil {
 		return nil, errors.InternalServerError("error trying to parse rest response")
 	}

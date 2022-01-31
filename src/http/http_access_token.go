@@ -5,7 +5,7 @@ import (
 
 	"github.com/LordRadamanthys/bookstore_oauth-api/src/domain/access_token"
 	"github.com/LordRadamanthys/bookstore_oauth-api/src/services/access_token_service"
-	"github.com/LordRadamanthys/bookstore_oauth-api/utils/errors"
+	"github.com/LordRadamanthys/bookstore_utils-go/rest_errors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -39,7 +39,7 @@ func (h *accessTokenHandler) GetById(c *gin.Context) {
 func (h *accessTokenHandler) Create(c *gin.Context) {
 	var at access_token.AccessTokenRequest
 	if err := c.ShouldBindJSON(&at); err != nil {
-		restErr := errors.BadRequestError("invalid json body")
+		restErr := rest_errors.BadRequestError("invalid json body", err)
 		c.JSON(restErr.Status, restErr)
 		return
 	}

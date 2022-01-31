@@ -7,19 +7,19 @@ import (
 	"github.com/LordRadamanthys/bookstore_oauth-api/src/domain/users"
 	"github.com/LordRadamanthys/bookstore_oauth-api/src/repository/db"
 	"github.com/LordRadamanthys/bookstore_oauth-api/src/repository/rest"
-	"github.com/LordRadamanthys/bookstore_oauth-api/utils/errors"
+	"github.com/LordRadamanthys/bookstore_utils-go/rest_errors"
 )
 
 type Service interface {
-	GetById(id string) (*access_token.AccessToken, *errors.RestErr)
-	Create(access_token.AccessTokenRequest) (*access_token.AccessToken, *errors.RestErr)
-	UpdateExpirationTime(access_token.AccessToken) *errors.RestErr
+	GetById(id string) (*access_token.AccessToken, *rest_errors.RestErr)
+	Create(access_token.AccessTokenRequest) (*access_token.AccessToken, *rest_errors.RestErr)
+	UpdateExpirationTime(access_token.AccessToken) *rest_errors.RestErr
 }
 
 type Repository interface {
-	GetById(string) (*access_token.AccessToken, *errors.RestErr)
-	Create(access_token.AccessTokenRequest) (*access_token.AccessToken, *errors.RestErr)
-	UpdateExpirationTime(access_token.AccessToken) *errors.RestErr
+	GetById(string) (*access_token.AccessToken, *rest_errors.RestErr)
+	Create(access_token.AccessTokenRequest) (*access_token.AccessToken, *rest_errors.RestErr)
+	UpdateExpirationTime(access_token.AccessToken) *rest_errors.RestErr
 }
 
 type service struct {
@@ -34,11 +34,11 @@ func NewService(restUsersRepo rest.RestUsersRepository, dbRepo db.DbRepository) 
 	}
 }
 
-func (s *service) GetById(access_token_id string) (*access_token.AccessToken, *errors.RestErr) {
+func (s *service) GetById(access_token_id string) (*access_token.AccessToken, *rest_errors.RestErr) {
 	access_token_id = strings.TrimSpace(access_token_id)
 
 	if len(access_token_id) == 0 {
-		return nil, errors.BadRequestError("invalid access token id")
+		return nil, rest_errors.BadRequestError("invalid access token id", nil)
 	}
 
 	access_token, err := s.dbRepo.GetById(access_token_id)
@@ -49,13 +49,13 @@ func (s *service) GetById(access_token_id string) (*access_token.AccessToken, *e
 	return access_token, nil
 }
 
-func (s *service) Create(request access_token.AccessTokenRequest) (*access_token.AccessToken, *errors.RestErr) {
+func (s *service) Create(request access_token.AccessTokenRequest) (*access_token.AccessToken, *rest_errors.RestErr) {
 	if err := request.Validate(); err != nil {
 		return nil, err
 	}
 
 	var user = &users.User{}
-	var err *errors.RestErr
+	var err *rest_errors.RestErr
 
 	switch request.GrantType {
 	case access_token.GrantTypeClientCredentials:
@@ -63,7 +63,7 @@ func (s *service) Create(request access_token.AccessTokenRequest) (*access_token
 	case access_token.GrantTypePassword:
 		user, err = s.restUsersRepo.LoginUser(request.Username, request.Password)
 	default:
-		return nil, errors.BadRequestError("invalid grant type")
+		return nil, rest_errors.BadRequestError("invalid grant type", nil)
 	}
 
 	if err != nil {
@@ -79,7 +79,7 @@ func (s *service) Create(request access_token.AccessTokenRequest) (*access_token
 	}
 	return &at, nil
 }
-func (s *service) UpdateExpirationTime(at access_token.AccessToken) *errors.RestErr {
+func (s *service) UpdateExpirationTime(at access_token.AccessToken) *rest_errors.RestErr {
 	if err := at.Validate(); err != nil {
 		return err
 	}

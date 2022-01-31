@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/LordRadamanthys/bookstore_oauth-api/src/domain/users"
-	"github.com/LordRadamanthys/bookstore_oauth-api/utils/errors"
+	"github.com/LordRadamanthys/bookstore_utils-go/rest_errors"
 	"github.com/mercadolibre/golang-restclient/rest"
 )
 
@@ -18,7 +18,7 @@ var (
 )
 
 type RestUsersRepository interface {
-	LoginUser(string, string) (*users.User, *errors.RestErr)
+	LoginUser(string, string) (*users.User, *rest_errors.RestErr)
 }
 
 type usersRepository struct{}
@@ -27,7 +27,7 @@ func NewRestRepository() RestUsersRepository {
 	return &usersRepository{}
 }
 
-func (r *usersRepository) LoginUser(email string, passowrd string) (*users.User, *errors.RestErr) {
+func (r *usersRepository) LoginUser(email string, passowrd string) (*users.User, *rest_errors.RestErr) {
 
 	request := users.UserLoginRequest{
 		Email:    email,
@@ -37,14 +37,14 @@ func (r *usersRepository) LoginUser(email string, passowrd string) (*users.User,
 	response := usersRestClient.Post("/users/login", request)
 
 	if response == nil || response.Response == nil {
-		return nil, errors.InternalServerError("invalid rest client response when trying to login user")
+		return nil, rest_errors.InternalServerError("invalid rest client response when trying to login user", nil)
 	}
 
 	if response.StatusCode > 299 {
-		var restErr errors.RestErr
+		var restErr rest_errors.RestErr
 		err := json.Unmarshal(response.Bytes(), &restErr)
 		if err != nil {
-			return nil, errors.InternalServerError("invalid error interface")
+			return nil, rest_errors.InternalServerError("invalid error interface", err)
 		}
 		return nil, &restErr
 	}
@@ -52,7 +52,7 @@ func (r *usersRepository) LoginUser(email string, passowrd string) (*users.User,
 	var user users.User
 	fmt.Println(response)
 	if err := json.Unmarshal(response.Bytes(), &user); err != nil {
-		return nil, errors.InternalServerError("error trying to parse rest response")
+		return nil, rest_errors.InternalServerError("error trying to parse rest response", err)
 	}
 
 	return &user, nil

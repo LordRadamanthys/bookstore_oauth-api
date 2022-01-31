@@ -1,3 +1,5 @@
+github.com/LordRadamanthys/bookstore_utils-go v0.0.0-20220131012342-90468be56c77 h1:12P1J2EiscuuMOUiyJYNsQmrZyHOZci889kPxghlz9s=
+github.com/LordRadamanthys/bookstore_utils-go v0.0.0-20220131012342-90468be56c77/go.mod h1:yRFj5BIsUfcWG1KV+0JlX+NWuMKeA9xNMWZVjb/4u7Y=
 github.com/bitly/go-hostpool v0.0.0-20171023180738-a3a6125de932/go.mod h1:NOuUCSz6Q9T7+igc/hlvDOUdtWKryOrtFyIVABv/p7k=
 github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869/go.mod h1:Ekp36dRnpXw/yCqJaO+ZrUyxD+3VXMFFr56k5XYrpB4=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=

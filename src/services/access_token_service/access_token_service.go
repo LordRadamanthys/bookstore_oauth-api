@@ -11,15 +11,15 @@ import (
 )
 
 type Service interface {
-	GetById(id string) (*access_token.AccessToken, *rest_errors.RestErr)
-	Create(access_token.AccessTokenRequest) (*access_token.AccessToken, *rest_errors.RestErr)
-	UpdateExpirationTime(access_token.AccessToken) *rest_errors.RestErr
+	GetById(id string) (*access_token.AccessToken, rest_errors.RestErr)
+	Create(access_token.AccessTokenRequest) (*access_token.AccessToken, rest_errors.RestErr)
+	UpdateExpirationTime(access_token.AccessToken) rest_errors.RestErr
 }
 
 type Repository interface {
-	GetById(string) (*access_token.AccessToken, *rest_errors.RestErr)
-	Create(access_token.AccessTokenRequest) (*access_token.AccessToken, *rest_errors.RestErr)
-	UpdateExpirationTime(access_token.AccessToken) *rest_errors.RestErr
+	GetById(string) (*access_token.AccessToken, rest_errors.RestErr)
+	Create(access_token.AccessTokenRequest) (*access_token.AccessToken, rest_errors.RestErr)
+	UpdateExpirationTime(access_token.AccessToken) rest_errors.RestErr
 }
 
 type service struct {
@@ -34,11 +34,11 @@ func NewService(restUsersRepo rest.RestUsersRepository, dbRepo db.DbRepository) 
 	}
 }
 
-func (s *service) GetById(access_token_id string) (*access_token.AccessToken, *rest_errors.RestErr) {
+func (s *service) GetById(access_token_id string) (*access_token.AccessToken, rest_errors.RestErr) {
 	access_token_id = strings.TrimSpace(access_token_id)
 
 	if len(access_token_id) == 0 {
-		return nil, rest_errors.BadRequestError("invalid access token id", nil)
+		return nil, rest_errors.NewBadRequestError("invalid access token id")
 	}
 
 	access_token, err := s.dbRepo.GetById(access_token_id)
@@ -49,13 +49,13 @@ func (s *service) GetById(access_token_id string) (*access_token.AccessToken, *r
 	return access_token, nil
 }
 
-func (s *service) Create(request access_token.AccessTokenRequest) (*access_token.AccessToken, *rest_errors.RestErr) {
+func (s *service) Create(request access_token.AccessTokenRequest) (*access_token.AccessToken, rest_errors.RestErr) {
 	if err := request.Validate(); err != nil {
 		return nil, err
 	}
 
 	var user = &users.User{}
-	var err *rest_errors.RestErr
+	var err rest_errors.RestErr
 
 	switch request.GrantType {
 	case access_token.GrantTypeClientCredentials:
@@ -63,7 +63,7 @@ func (s *service) Create(request access_token.AccessTokenRequest) (*access_token
 	case access_token.GrantTypePassword:
 		user, err = s.restUsersRepo.LoginUser(request.Username, request.Password)
 	default:
-		return nil, rest_errors.BadRequestError("invalid grant type", nil)
+		return nil, rest_errors.NewBadRequestError("invalid grant type")
 	}
 
 	if err != nil {
@@ -79,7 +79,7 @@ func (s *service) Create(request access_token.AccessTokenRequest) (*access_token
 	}
 	return &at, nil
 }
-func (s *service) UpdateExpirationTime(at access_token.AccessToken) *rest_errors.RestErr {
+func (s *service) UpdateExpirationTime(at access_token.AccessToken) rest_errors.RestErr {
 	if err := at.Validate(); err != nil {
 		return err
 	}

@@ -31,56 +31,56 @@ type AccessTokenRequest struct {
 	ClientSecret string `json:"client_secret"`
 }
 
-func (at *AccessTokenRequest) Validate() *rest_errors.RestErr {
+func (at *AccessTokenRequest) Validate() rest_errors.RestErr {
 	switch at.GrantType {
 	case GrantTypePassword:
 		return at.validatePasswordGrantType()
 	case GrantTypeClientCredentials:
 		return at.validatePasswordGrantType()
 	default:
-		return rest_errors.BadRequestError("invalid grant_type parameter", nil)
+		return rest_errors.NewBadRequestError("invalid grant_type parameter")
 	}
 
 }
 
-func (at *AccessToken) Validate() *rest_errors.RestErr {
+func (at *AccessToken) Validate() rest_errors.RestErr {
 	at.AccessToken = strings.TrimSpace(at.AccessToken)
 
 	if at.AccessToken == "" {
-		return rest_errors.BadRequestError("invalid access token id", nil)
+		return rest_errors.NewBadRequestError("invalid access token id")
 	}
 	if at.UserId <= 0 {
-		return rest_errors.BadRequestError("invalid user id", nil)
+		return rest_errors.NewBadRequestError("invalid user id")
 	}
 	if at.ClientId <= 0 {
-		return rest_errors.BadRequestError("invalid client id", nil)
+		return rest_errors.NewBadRequestError("invalid client id")
 	}
 	if at.Expires <= 0 {
-		return rest_errors.BadRequestError("invalid expiration time", nil)
+		return rest_errors.NewBadRequestError("invalid expiration time")
 	}
 
 	return nil
 
 }
-func (at *AccessTokenRequest) validatePasswordGrantType() *rest_errors.RestErr {
+func (at *AccessTokenRequest) validatePasswordGrantType() rest_errors.RestErr {
 	if strings.TrimSpace(at.Username) == "" {
-		return rest_errors.BadRequestError("username can not be empty", nil)
+		return rest_errors.NewBadRequestError("username can not be empty")
 	}
 
 	if strings.TrimSpace(at.Password) == "" {
-		return rest_errors.BadRequestError("password can not be empty", nil)
+		return rest_errors.NewBadRequestError("password can not be empty")
 	}
 
 	return nil
 }
 
-func (at *AccessTokenRequest) validateClientGrantType() *rest_errors.RestErr {
+func (at *AccessTokenRequest) validateClientGrantType() rest_errors.RestErr {
 	if strings.TrimSpace(at.ClientID) == "" {
-		return rest_errors.BadRequestError("client_id can not be empty", nil)
+		return rest_errors.NewBadRequestError("client_id can not be empty")
 	}
 
 	if strings.TrimSpace(at.ClientSecret) == "" {
-		return rest_errors.BadRequestError("client_secret can not be empty", nil)
+		return rest_errors.NewBadRequestError("client_secret can not be empty")
 	}
 
 	return nil

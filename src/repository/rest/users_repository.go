@@ -18,7 +18,7 @@ var (
 )
 
 type RestUsersRepository interface {
-	LoginUser(string, string) (*users.User, *rest_errors.RestErr)
+	LoginUser(string, string) (*users.User, rest_errors.RestErr)
 }
 
 type usersRepository struct{}
@@ -27,7 +27,7 @@ func NewRestRepository() RestUsersRepository {
 	return &usersRepository{}
 }
 
-func (r *usersRepository) LoginUser(email string, passowrd string) (*users.User, *rest_errors.RestErr) {
+func (r *usersRepository) LoginUser(email string, passowrd string) (*users.User, rest_errors.RestErr) {
 
 	request := users.UserLoginRequest{
 		Email:    email,
@@ -37,22 +37,22 @@ func (r *usersRepository) LoginUser(email string, passowrd string) (*users.User,
 	response := usersRestClient.Post("/users/login", request)
 
 	if response == nil || response.Response == nil {
-		return nil, rest_errors.InternalServerError("invalid rest client response when trying to login user", nil)
+		return nil, rest_errors.NewInternalServerError("invalid rest client response when trying to login user", nil)
 	}
 
 	if response.StatusCode > 299 {
 		var restErr rest_errors.RestErr
 		err := json.Unmarshal(response.Bytes(), &restErr)
 		if err != nil {
-			return nil, rest_errors.InternalServerError("invalid error interface", err)
+			return nil, rest_errors.NewInternalServerError("invalid error interface", err)
 		}
-		return nil, &restErr
+		return nil, restErr
 	}
 
 	var user users.User
 	fmt.Println(response)
 	if err := json.Unmarshal(response.Bytes(), &user); err != nil {
-		return nil, rest_errors.InternalServerError("error trying to parse rest response", err)
+		return nil, rest_errors.NewInternalServerError("error trying to parse rest response", err)
 	}
 
 	return &user, nil

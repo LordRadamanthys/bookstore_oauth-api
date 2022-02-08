@@ -5,7 +5,7 @@ go 1.17
 require github.com/stretchr/testify v1.7.0
 
 require (
-	github.com/LordRadamanthys/bookstore_utils-go v0.0.0-20220131012342-90468be56c77 // indirect
+	github.com/LordRadamanthys/bookstore_utils-go v0.0.0-20220208023731-bf8a681022af // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.13.0 // indirect
 	github.com/go-playground/universal-translator v0.17.0 // indirect
@@ -31,5 +31,5 @@ require (
 	github.com/gin-gonic/gin v1.7.7
 	github.com/gocql/gocql v0.0.0-20211222173705-d73e6b1002a7
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c // indirect
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
